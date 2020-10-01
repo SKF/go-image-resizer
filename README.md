@@ -7,13 +7,16 @@ This package is able to resize images of type gif, jpeg, and png.
 ```
 package main
 
-import "github.com/SKF/go-image-resizer/resizer"
+import (
+	"io/ioutil"
+
+	"github.com/SKF/go-image-resizer/resizer"
+)
 
 func main() {
-    image, _ := ioutil.ReadFile("image.png")
+	image, _ := ioutil.ReadFile("image.png")
 
-    newImage, err := ResizeImage(image, resizer.ImageEncodingPNG, 800, 800)
-
+	resizedImage, err := resizer.ResizeImage(image, resizer.JpegEncoder, 800, 800)
 }
 
 ```
