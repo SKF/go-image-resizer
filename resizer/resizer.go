@@ -2,6 +2,7 @@ package resizer
 
 import (
 	"bytes"
+	"fmt"
 	"image"
 	"image/gif"
 	"image/jpeg"
@@ -37,9 +38,6 @@ func PngEncoder(w io.Writer, image image.Image) error {
 func ResizeImage(imageToResize []byte, encodeFunc Encoder, desiredWidth, desiredHeight int) ([]byte, error) {
 	i, err := decodeImage(&imageToResize)
 	if err != nil {
-		log.WithError(err).
-			Error("Unable to decide image for thumbnail generation")
-
 		return nil, err
 	}
 
@@ -49,10 +47,7 @@ func ResizeImage(imageToResize []byte, encodeFunc Encoder, desiredWidth, desired
 
 	err = encodeFunc(&byteBuffer, resizedImage)
 	if err != nil {
-		log.WithError(err).
-			Error("Unable to encode image from resize")
-
-		return nil, err
+		return nil, fmt.Errorf("unable to encode image: %w", err)
 	}
 
 	return byteBuffer.Bytes(), nil
@@ -76,10 +71,7 @@ func ResizableContentType(contentType string) bool {
 func decodeImage(imgData *[]byte) (image.Image, error) {
 	img, err := imaging.Decode(bytes.NewReader(*imgData))
 	if err != nil {
-		log.WithError(err).
-			Error("Unable to decode image for resize")
-
-		return nil, err
+		return nil, fmt.Errorf("unable to decode image bytes: %w", err)
 	}
 
 	x, err := exif.Decode(bytes.NewReader(*imgData))
